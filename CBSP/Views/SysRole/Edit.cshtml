@@ -1,0 +1,98 @@
+﻿@model CBSP.DAL.Sys_Role
+
+@{
+    Layout = "~/Views/Shared/MainPage.cshtml";
+    ViewBag.Title = "新增编辑角色管理";
+}
+<link rel="stylesheet" href="~/plugins/zTree/css/metroStyle/metroStyle.css" type="text/css">
+<script type="text/javascript" src="~/plugins/zTree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="~/plugins/zTree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript">
+    var setting = {
+        check: {
+            enable: true,
+            chkboxType: { "Y": "p", "N": "s" }
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+
+    function SaveSysRole() {
+        var treeObj = $.fn.zTree.getZTreeObj("treeRight");
+        nodes = treeObj.getCheckedNodes(true);
+        var nodeArray = new Array();
+        for (var i = 0; i < nodes.length; i++) {    
+            nodeArray.push(nodes[i].id);
+        }
+        //alert(nodeArray.toString());
+        $("#nodes").val(nodeArray.toString());
+        $("#SysRoleForm").submit();//提交表格
+    }
+
+    $(document).ready(function () {
+        $.getJSON('/SysRight/GetNodes', function (zNodes) {
+            $.fn.zTree.init($("#treeRight"), setting, zNodes);
+        })
+    });
+
+   
+</script>
+
+<div class="widget flat radius-bordered">
+    <div class="widget-header bordered-bottom bordered-sky">
+        <i class="widget-icon fa fa-calendar sky"></i><span class="widget-caption">@ViewBag.Title</span>
+    </div>
+    <div class="widget-body">
+        <div class="widget-main">
+            @using (Html.BeginForm("SaveSysRole", "SysRole", FormMethod.Post, new { role = "form", @id = "SysRoleForm" }))
+            { 
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.id)
+                @Html.HiddenFor(model => model.id)
+                @Html.Hidden("nodes");
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="input-group">
+                                @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "input-group-addon" })
+                                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-title">
+                    角色授权
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <ul id="treeRight" class="ztree"></ul>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <input type="button" value="保存" class="btn btn-primary" onclick="javascript:SaveSysRole();"/>
+                            @Html.ActionLink("返回", "Index", routeValues: null, htmlAttributes: new { id = "editabledatatable_new", @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                </div>
+
+                }
+
+            </div>
+        </div><!--Widget Body-->
+    </div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+     
